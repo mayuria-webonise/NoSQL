@@ -1,5 +1,6 @@
 collection users
 {
+	_id:87812
 	name : "mayuri",
 	surname: "ardad",
 	login_credentials:{
@@ -11,23 +12,26 @@ collection users
 			position: "admin",
 			people_assigned: [....],
 			},
-	posts: [.....]
+	
 }
 
 
 
 collection posts
-
 {
+	user_id :(user_id)
+	title: "title"
 	text: "hello",
 	image: ObjectId('....'),
-	comments: {	
-				id: ObjectID();
+	created_at: (timestamp)
+	comments: [{	
+				id: ObjectID()
 				user_id : (user_id)
 				text: "hello"
-				replies: [....] //ids refering to comments
+				comment_time: (timestamp)
+				parent_comment:ObjectID(id)
 
-				},
+				},],
 	tags: [....],
 
 }
