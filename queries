@@ -1,0 +1,107 @@
+
+db.users.insert({"name" : "admin", "surname" : "admin", "login_credentials" : { "username" : "webonise", "password" : "somethig" }, "role" : { "position" : "admin" ,people_assigned:["57bda4669babcde77511a925","57bda4669babcde77511a926"]}})
+
+db.posts.insert({user_id:57bda4669babcde77511a925,title: "first post",
+... ... ... text:"this is my first post",
+... ... ... image:"image.png",
+... ... ... created_at:"26/08/2016",
+... ... ... comments:[{
+... ... ... id:ObjectID(),
+... ... ... user_id:57bda4669babcde77511a926,
+... ... ... text:"nice post",
+... ... ... comment_time:"26/08/2016 3.00 PM"}],
+... ... ... tags:["#nature","#latest"]
+... ... ... })
+
+Data in users collection
+db.users.find().pretty()
+{
+	"_id" : ObjectId("57bda4669babcde77511a925"),
+	"name" : "mayuri",
+	"surname" : "ardad",
+	"login_credentials" : {
+		"username" : "mayuri",
+		"password" : "somethig"
+	},
+	"role" : {
+		"position" : "user"
+	}
+}
+{
+	"_id" : ObjectId("57bda4669babcde77511a926"),
+	"name" : "komal",
+	"surname" : "lunkad",
+	"login_credentials" : {
+		"username" : "komal",
+		"password" : "lunkad"
+	},
+	"role" : {
+		"position" : "user"
+	}
+}
+{
+	"_id" : ObjectId("57c0494eaadccedbf251a4cd"),
+	"name" : "admin",
+	"surname" : "admin",
+	"login_credentials" : {
+		"username" : "webonise",
+		"password" : "somethig"
+	},
+	"role" : {
+		"position" : "admin",
+		"people_assigned" : [
+			"57bda4669babcde77511a925",
+			"57bda4669babcde77511a926"
+		]
+	}
+}
+
+
+Data in posts collection
+ db.posts.find().pretty()
+{
+	"_id" : ObjectId("57c043d7aadccedbf251a4cb"),
+	"user_id" : "57bda4669babcde77511a925",
+	"title" : "first post",
+	"text" : "this is my first post",
+	"image" : "image.png",
+	"created_at" : "26/08/2016",
+	"comments" : [
+		{
+			"id" : ObjectId("57c043d7aadccedbf251a4ca"),
+			"user_id" : "57bda4669babcde77511a926",
+			"text" : "nice post",
+			"comment_time" : "26/08/2016 3.00 PM"
+		},
+		{
+			"id" : ObjectId("57c0520f45971fdc787f2e02"),
+			"user_id" : "57bda4669babcde77511a926",
+			"text" : "congrats",
+			"comment_time" : "27/08/2016 12.01 PM",
+			"parent_comment" : "57c043d7aadccedbf251a4ca"
+		}
+	],
+	"tags" : [
+		"#nature",
+		"#latest"
+	]
+}
+
+
+
+
+add one more comment in comments array
+db.posts.update({title:"first post"},{$push:{"comments":{id:ObjectId(),user_id: "57bda4669babcde77511a926",text:"welcome",comment_time:"27/08/2016 12.01 PM",parent_comment:"57c043d7aadccedbf251a4ca"}}})
+
+update comment text
+db.posts.update({title:"first post","comments.id":ObjectId("57c0520f45971fdc787f2e02")},{$set:{"comments.$.text":"congrats"}})
+
+get count of comments in posts
+db.posts.aggregate( [ { $project:{count:{$size:"$comments"}}}])
+
+get post where comment count is greater than one
+db.posts.find({$where:"this.comments.length>1"}).pretty()
+
+delete particular comment from comments array
+db.posts.update({title:"first post"},{$unset:{"comments.1":1}})
+db.posts.update({title:"first post"},{$pull:{"comments":null}})
